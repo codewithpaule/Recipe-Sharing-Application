@@ -21,7 +21,7 @@ To set up the project locally, follow these steps:
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/codewithpaule/Recipe-Sharing-Application.git
-   cd recipe-sharing-platform
+   cd Recipe_sharing
 
 2. **Create a Virtual Environment:**
     python -m venv venv
