@@ -20,7 +20,7 @@ To set up the project locally, follow these steps:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/recipe-sharing-platform.git
+   git clone https://github.com/codewithpaule/Recipe-Sharing-Application.git
    cd recipe-sharing-platform
 
 2. **Create a Virtual Environment:**
