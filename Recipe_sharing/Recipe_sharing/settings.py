@@ -26,10 +26,7 @@ SECRET_KEY = 'django-insecure-@v3_yj_44#a_4+nmd)r$k^@%%!eqf$#ms=c8l@)3ovk&cs#tow
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0429-105-113-64-80.ngrok-free.app']
-
-
-CSRF_TRUSTED_ORIGINS = ['https://0429-105-113-64-80.ngrok-free.app']
+ALLOWED_HOSTS = []
 
 
 
@@ -140,9 +137,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
-EMAIL_HOST_USER = 'pauleruvwu@gmail.com'
-EMAIL_HOST_PASSWORD = 'xfuy rlxq gpgb hfbi'  # Use an app password if you have 2FA enabled
-DEFAULT_FROM_EMAIL = 'pauleruvwu@gmail.com'
+EMAIL_HOST_USER = 'YOUR_HOST_EMAIL'
+EMAIL_HOST_PASSWORD = 'YOUR_HOST_PASSWORD'  # Use an app password if you have 2FA enabled
 
 
 
