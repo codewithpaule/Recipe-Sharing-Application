@@ -1,0 +1,445 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>CHOW | ENJOY AND SHARE RECIPES</title>
+        <link rel="shortcut icon" type="image/png" href="img/favicon.png" >
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Leckerli+One&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+  <script src="{% static 'js/uikit.js' %}"></script>
+        <style>
+            /* Add this CSS to your <style> tag or external stylesheet */
+  .profile-picture {
+    display: flex;
+    align-items: center;
+  }
+
+  .profile-picture img {
+    border-radius: 50%;
+    border: 2px solid #fff; /* Add a white border around the image */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add a shadow effect */
+  }
+
+  .profile-picture .uk-margin-left {
+    margin-left: 10px; /* Adjust the margin as needed */
+  }
+
+  /* Style for the logout link */
+  .profile-picture .uk-text-small {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+
+  .profile-picture .uk-text-small:hover {
+    color: #666; /* Change the color on hover */
+  }
+
+.removebtn{
+  color: red;
+  font-size: 20px;
+  margin-left: -29px;
+}
+
+.alert {
+  position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f44336; /* Red */
+        color: white;
+        padding: 15px;
+        z-index: 1000; /* Ensure it's above other content */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for better visibility */
+    }
+
+        </style>
+        
+      </head>
+<body>
+    <nav class="uk-navbar-container uk-letter-spacing-small">
+        <div class="uk-container">
+          <div class="uk-position-z-index" data-uk-navbar>
+            <div class="uk-navbar-left">
+              <a class="uk-navbar-item uk-logo" href="#">CHOW</a>
+              <ul class="uk-navbar-nav uk-visible@m uk-margin-large-left">
+                <li ><a href="{% url 'home' %}">Home</a></li>
+                <!-- <li ><a href="{% url 'recipe' %}">Recipe</a></li> -->
+                <li class="uk-active"><a href="{% url 'share' %}">Share Recipe</a></li>
+                <li ><a href="{% url 'contact' %}">Contact</a></li>
+                <li ><a href="{% url 'faq' %}">FAQ</a></li>
+                <li>
+                  {% if user.is_authenticated %}
+                      <a href="{% url 'shared-recipes' %}">Shared Recipe</a>
+                  {% endif %}
+                </li>
+              </ul>
+            </div>
+            <div class="uk-navbar-right">
+              <!-- <div>
+                <a class="uk-navbar-toggle" data-uk-search-icon href="#"></a>
+                <div class="uk-drop uk-background-default" data-uk-drop="mode: click; pos: left-center; offset: 0">
+                  <form class="uk-search uk-search-navbar uk-width-1-1">
+                    <input class="uk-search-input uk-text-demi-bold" type="search" placeholder="Search..." autofocus>
+                  </form>
+                </div>
+              </div> -->
+              <div class="profile-picture">
+                {% if user.is_authenticated %}
+                    <div class="uk-width-auto uk-first-column">
+                      <!-- Ensure that the profile picture URL is accessed correctly -->
+                      <a href="{% url 'manage' %}" data-uk-tooltip="title: Personal Details"><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 448 512" height="25px" width="30px" fill="#eb4a36"><path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z"/></svg>
+                      </a>                  </div>
+                    <div class="uk-margin-left">
+                        <a class="uk-text-small uk-text-primary" href="{% url 'logout' %}">Logout</a>
+                    </div>
+                {% else %}
+                    <div class="uk-margin-left" style="margin-left: 0px !important;">
+                        <a class="uk-button" href="{% url 'signin' %}">Sign In</a>
+                        <a class="uk-button uk-button-primary" href="{% url 'signup' %}">Sign Up</a>
+                    </div>
+                {% endif %}
+              </div>
+              <a class="uk-navbar-toggle uk-hidden@m" href="#offcanvas" data-uk-toggle><span
+                data-uk-navbar-toggle-icon></span></a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+ <style>
+  .sng a:hover{
+    color: black;
+  }
+ </style>
+<!-- Alert!!! -->
+<div id="alertContainer"></div>
+      <div class="uk-section uk-section-default">
+        <div class="uk-container uk-container-small">
+          <div class="uk-grid-large" data-uk-grid>
+            <div class="uk-width-expand@m">
+              <div class="uk-article">
+                {% if user.is_authenticated %}
+                <!-- Form for adding recipe details -->
+                <form id="recipeForm" class="uk-form-stacked" method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <fieldset class="uk-fieldset">
+                    <legend class="uk-legend">Add Recipe Details</legend>
+    
+                    <div class="uk-margin">
+                      <label class="uk-form-label" for="recipeName">Recipe Name</label>
+                      <div class="uk-form-controls">
+                        <input class="uk-input" type="text" id="recipeName" name="recipeName" placeholder="Enter recipe name" required>
+                      </div>
+                    </div>
+    
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="profilePicture">Meal Picture</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" type="file" id="profilePicture" name="profilePicture" accept="image/*" required>
+                        </div>
+                    </div>
+
+                    <div class="uk-margin">
+                      <label class="uk-form-label" for="recipeDescription">Recipe Description</label>
+                      <div class="uk-form-controls">
+                        <textarea class="uk-textarea" id="recipeDescription" name="recipeDescription" rows="5" required placeholder="Enter recipe description" maxlength="800" minlength="100"></textarea>
+                      </div>
+                    </div>
+
+                    <div id="ingredientContainer">
+                      <button class="uk-button uk-button-primary" type="button" name="recipeIngredient" onclick="addIngredient()">Add Ingredient</button>
+                    </div>
+
+                  <br>
+                  
+                    <div id="stepContainer">
+                      <button class="uk-button uk-button-primary" type="button" name="recipeProcedure" onclick="addStep()">Add Step</button>
+                    </div>
+                  
+                  <!-- Button to add ingredients dynamically -->
+                  
+
+                    <div class="uk-margin">
+                        <label class="uk-form-label">Tags</label>
+                        <div class="uk-form-controls">
+                            <div class="checkbox-group">
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Breakfast and Brunch" > Breakfast and Brunch</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Lunch"> Lunch</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Dinner"> Dinner</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Desserts"> Desserts</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Snack"> Snacks</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Diabetic"> Diabetic</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="High Fiber"> High Fiber</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Low Calorie"> Low Calorie</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Nigerian"> Nigerian</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Indian"> Indian</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Italian"> Italian</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Mexican"> Mexican</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Birthday"> Birthday</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Easter"> Easter</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Wedding"> Wedding</label>
+                                <label><input class="uk-checkbox" type="checkbox" name="recipeTags" value="Christmas"> Christmas</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+    
+                    <div class="uk-margin">
+                      <button class="uk-button uk-button-primary" type="submit" id="submitBtn">Submit</button>
+                    </div>
+                  </fieldset>
+                </form>
+                {% else %}
+                <div class="uk-width-auto">
+                  <h1>
+                    Sorry you need to have an account to share your recipe! <span class="sng"> <a style="color: #eb4a36;" href="{% url 'signup' %}" data-uk-toggle>Sign Up Now
+                    </a>
+                    </span>
+                  </h1>
+                </div>
+                <div class="uk-child-width-1-2 uk-child-width-1-3@s" data-uk-grid>
+                  {% for recipe in recipes|slice:":6" %}
+                  <div>
+                    <div class="uk-card">
+                      <div class="uk-card-media-top uk-inline uk-light" style="height: 160px; overflow: hidden;">
+                          <img class="uk-border-rounded-medium" src="{{ MEDIA_URL }}{{ recipe.image.url }}" alt="{{ recipe.name }}" style="width: 300px; height: auto; object-fit: cover;">
+                          <div class="uk-position-cover uk-card-overlay uk-border-rounded-medium"></div>
+                          <!-- <div class="uk-position-xsmall uk-position-top-right">
+                              <a href="#" class="uk-icon-button uk-like uk-position-z-index uk-position-relative" data-uk-icon="heart"></a>
+                          </div> -->
+                      </div>
+                      <div>
+                        <a href="{% url 'recipe_detail' recipe_name=recipe.name %}"><h3 class="uk-card-title uk-text-500 uk-margin-small-bottom uk-margin-top" style="text-transform: capitalize;">{{ recipe.name }}</h3></a>
+                        <div class="uk-text-xsmall uk-text-muted" data-uk-grid>
+                              <!-- <div class="uk-width-auto uk-flex uk-flex-middle">
+                                  <span class="uk-rating-filled" data-uk-icon="icon: star; ratio: 0.7"></span>
+                                  <span class="uk-margin-xsmall-left">5.0</span>
+                                  <span>(73)</span>
+                              </div> -->
+                              <div class="uk-width-auto uk-text-left user-name">by <span style="text-transform: capitalize;">{{ recipe.author.first_name }} {{ recipe.author.last_name }}</span></div>
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+        </div>
+      
+
+
+
+      <footer class="uk-section uk-section-default">
+        <div class="uk-container uk-text-secondary uk-text-500">
+            <div class="uk-child-width-1-2@s" data-uk-grid>
+                <div>
+                    <a href="#" class="uk-logo">CHOW</a>
+                </div>
+                <div class="uk-flex uk-flex-middle uk-flex-right@s">
+                    <div data-uk-grid class="uk-child-width-auto uk-grid-small">
+                        <div>
+                            <a href="https://www.facebook.com/" data-uk-icon="icon: facebook; ratio: 0.8" class="uk-icon-button facebook" target="_blank"></a>
+                        </div>
+                        <div>
+                            <a href="https://www.instagram.com/" data-uk-icon="icon: instagram; ratio: 0.8" class="uk-icon-button instagram" target="_blank"></a>
+                        </div>
+                        <div>
+                            <a href="#" data-uk-icon="icon: twitter; ratio: 0.8" class="uk-icon-button twitter" target="_blank"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-margin-medium-top uk-text-small uk-text-muted">				
+                <div>Made by <a class="uk-link-muted" target="_blank">Paul Erhuvwu</a></div>
+            </div>
+        </div>
+    </footer>
+    
+    <div id="offcanvas" data-uk-offcanvas="flip: true; overlay: true">
+      <div class="uk-offcanvas-bar">
+        <a class="uk-logo" href="#">CHOW</a>
+        <button class="uk-offcanvas-close" type="button" data-uk-close="ratio: 1.2"></button>
+        <ul class="uk-nav uk-nav-primary uk-nav-offcanvas uk-margin-medium-top uk-text-center">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+          <li><a href="{% url 'faq' %}">FAQ</a></li>
+          <li><a href="{% url 'share' %}">Share Recipe</a></li>
+          {% if user.is_authenticated %}
+          <li>
+            <a href="{% url 'shared-recipes' %}">Shared Recipe</a>
+            <a class="uk-button uk-width-1-1 uk-button-primary" style="font-size: 17px; color: #666; font-weight: bold;" href="{% url 'logout' %}">Logout</a> 
+          </li>
+          {% else %}
+          <li><a href="{% url 'signin' %}">Sign In</a></li>
+        </ul>
+        <div class="uk-margin-medium-top">
+          <a class="uk-button uk-width-1-1 uk-button-primary" style="font-size: 17px;" href="{% url 'signup' %}">Sign Up</a>
+        </div>
+        {% endif %}
+        <div class="uk-margin-medium-top uk-text-center">
+          <div data-uk-grid class="uk-child-width-auto uk-grid-small uk-flex-center">
+            <div>
+              <a href="https://twitter.com/" data-uk-icon="icon: twitter" class="uk-icon-link" target="_blank"></a>
+            </div>
+            <div>
+              <a href="https://www.facebook.com/" data-uk-icon="icon: facebook" class="uk-icon-link" target="_blank"></a>
+            </div>
+            <div>
+              <a href="https://www.instagram.com/" data-uk-icon="icon: instagram" class="uk-icon-link" target="_blank"></a>
+            </div>
+            <div>
+              <a href="https://vimeo.com/" data-uk-icon="icon: vimeo" class="uk-icon-link" target="_blank"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Function to remove step field
+      function removeStep(stepDiv) {
+          stepDiv.remove();
+          // Renumber the remaining steps
+          var steps = document.querySelectorAll('.step');
+          steps.forEach(function(step, index) {
+              var currentNumber = index + 1;
+              step.querySelector('label').innerHTML = `Step ${currentNumber} <span style="color: red;">*Must Be More Than 30 Characters*</span>`;
+              var textarea = step.querySelector('textarea');
+              textarea.placeholder = `Enter step ${currentNumber}`;
+              textarea.required = true; // Set the textarea as required
+              textarea.setAttribute('maxlength', '500'); // Set the maxlength attribute
+              textarea.setAttribute('minlength', '30'); // Set the minlength attribute
+          });
+      }
+  
+      // Function to remove ingredient field
+      function removeIngredient(ingredientDiv) {
+          ingredientDiv.remove();
+          // Renumber the remaining ingredients
+          var ingredients = document.querySelectorAll('.ingredient');
+          ingredients.forEach(function(ingredient, index) {
+              var currentNumber = index + 1;
+              ingredient.querySelector('label').innerHTML = `Ingredient ${currentNumber} <span style="color: red;">*Must Be More Than 3 Characters*</span>`;
+              var input = ingredient.querySelector('input');
+              input.placeholder = `Enter ingredient ${currentNumber}`;
+              input.required = true; // Set the input as required
+              input.setAttribute('maxlength', '100'); // Set the maxlength attribute
+              input.setAttribute('minlength', '3'); // Set the minlength attribute
+          });
+      }
+  
+      // Function to add step fields dynamically
+      function addStep() {
+          var stepContainer = document.getElementById('stepContainer');
+          var stepNumber = document.querySelectorAll('.step').length + 1;
+          var stepDiv = document.createElement('div');
+          stepDiv.classList.add('uk-margin', 'step');
+          stepDiv.innerHTML = `
+              <label class="uk-form-label" for="step${stepNumber}">Step ${stepNumber} <span style="color: red;">*Must Be More Than 30 Characters*</span></label>
+              <div class="uk-form-controls">
+                  <textarea class="uk-textarea" id="step${stepNumber}" name="recipeProcedure${stepNumber}" rows="2" placeholder="Enter step ${stepNumber}" required maxlength="500" minlength="20"></textarea>
+              </div>
+          `;
+  
+          // Create a remove button for the step
+          var removeButton = document.createElement('a');
+          removeButton.classList.add('uk-button', 'removebtn');
+          removeButton.href = '#';
+          removeButton.textContent = 'Remove';
+          removeButton.onclick = function(event) {
+              event.preventDefault(); // Prevent default action (page refresh)
+              removeStep(stepDiv);     // Call removeStep function
+          };
+          stepDiv.appendChild(removeButton);
+  
+          // Insert the new step before the last child of stepContainer
+          stepContainer.insertBefore(stepDiv, stepContainer.lastChild.previousSibling);
+      }
+  
+      // Function to add ingredient fields dynamically
+      function addIngredient() {
+          var ingredientContainer = document.getElementById('ingredientContainer');
+          var ingredientNumber = document.querySelectorAll('.ingredient').length + 1;
+          var ingredientDiv = document.createElement('div');
+          ingredientDiv.classList.add('uk-margin', 'ingredient');
+          ingredientDiv.innerHTML = `
+              <label class="uk-form-label" for="ingredient${ingredientNumber}">Ingredient ${ingredientNumber} <span style="color: red;">*Must Be More Than 5 Characters*</span></label>
+              <div class="uk-form-controls">
+                  <input class="uk-input" type="text" id="ingredient${ingredientNumber}" name="recipeIngredient${ingredientNumber}" placeholder="Enter ingredient ${ingredientNumber}" required maxlength="50" minlength="3">
+              </div>
+          `;
+  
+          // Create a remove button for the ingredient
+          var removeButton = document.createElement('a');
+          removeButton.classList.add('uk-button', 'removebtn');
+          removeButton.href = '#';
+          removeButton.textContent = 'Remove';
+          removeButton.onclick = function(event) {
+              event.preventDefault(); // Prevent default action (page refresh)
+              removeIngredient(ingredientDiv); // Call removeIngredient function
+          };
+          ingredientDiv.appendChild(removeButton);
+  
+          // Insert the new ingredient before the last child of ingredientContainer
+          ingredientContainer.insertBefore(ingredientDiv, ingredientContainer.lastChild.previousSibling);
+      }
+  </script>
+  
+      
+      
+      
+      
+
+      <script>
+        // Function to validate the form before submission
+        function validateForm() {
+            var ingredientCount = document.querySelectorAll('.ingredient').length;
+            var stepCount = document.querySelectorAll('.step').length;
+            var alertContainer = document.getElementById('alertContainer');
+        
+            if (ingredientCount < 2) {
+                showAlert('Please add at least 2 ingredients.');
+                return false;
+            }
+        
+            if (stepCount < 2) {
+                showAlert('Please add at least 2 steps.');
+                return false;
+            }
+        
+            return true;
+        }
+        
+        // Function to display alert message
+        function showAlert(message) {
+            var alertDiv = document.createElement('div');
+            alertDiv.classList.add('alert');
+            alertDiv.textContent = message;
+        
+            var alertContainer = document.getElementById('alertContainer');
+            alertContainer.appendChild(alertDiv);
+        
+            // Remove the alert after 5 seconds
+            setTimeout(function() {
+                alertDiv.remove();
+            }, 5000);
+        }
+        
+        document.getElementById('recipeForm').addEventListener('submit', function(event) {
+            if (!validateForm()) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+        </script>
+        
+        
+</body>
+</html>

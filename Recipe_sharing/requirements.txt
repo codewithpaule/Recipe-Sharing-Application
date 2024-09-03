@@ -1,0 +1,5 @@
+Django==5.0.3
+whitenoise==6.5.0
+django-crispy-forms==2.0.0
+django-widget-tweaks==1.4.11
+pillow==10.0.0

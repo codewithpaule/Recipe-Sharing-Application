@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-gb" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CHOW | ENJOY AND SHARE RECIPES</title>
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png" >
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Leckerli+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+  <script src="{% static 'js/uikit.js' %}"></script>
+</head>
+
+<body>
+
+<nav class="uk-navbar-container uk-letter-spacing-small">
+  <div class="uk-container">
+    <div class="uk-position-z-index" data-uk-navbar>
+      <div class="uk-navbar-left">
+        <a class="uk-navbar-item uk-logo" href="#">CHOW</a>
+        <ul class="uk-navbar-nav uk-visible@m uk-margin-large-left">
+          <li ><a href="{% url 'home' %}">Home</a></li>
+          <!-- <li ><a href="{% url 'recipe' %}">Recipe</a></li> -->
+          <li ><a href="{% url 'share' %}">Share Recipe</a></li>
+          <li ><a href="{% url 'contact' %}">Contact</a></li>
+          <li ><a href="{% url 'faq' %}">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="uk-navbar-right">
+        <!-- <div>
+          <a class="uk-navbar-toggle" data-uk-search-icon href="#"></a>
+          <div class="uk-drop uk-background-default" data-uk-drop="mode: click; pos: left-center; offset: 0">
+            <form class="uk-search uk-search-navbar uk-width-1-1">
+              <input class="uk-search-input uk-text-demi-bold" type="search" placeholder="Search..." autofocus>
+            </form>
+          </div>
+        </div> -->
+        <ul class="uk-navbar-nav uk-visible@m">
+          <li ><a href="{% url 'signin' %}" >Sign In</a></li>
+        </ul>
+        <div class="uk-navbar-item">
+            <div>
+                <a class="uk-button uk-button-primary uk-active uk-visible@m" href="{% url 'signup' %}" >Sign Up</a>
+            </div>
+        </div>        
+        <a class="uk-navbar-toggle uk-hidden@m" href="#offcanvas" data-uk-toggle><span
+          data-uk-navbar-toggle-icon></span></a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+
+<div id="signupPopup" class="uk-modal-full" style="margin-top: -30px;">
+    <div>
+        <div class="uk-modal-header">
+            <h2 class="uk-modal-title">Sign Up</h2>
+        </div>
+        <p style="color: red; margin: 5vh 0px 0px 20vw; width: 50%; padding: 5px; text-align: center;">
+            {{error_message}}
+        </p>
+        <div class="uk-modal-body">
+            <form id="signupForm" class="uk-form-stacked" method="post" enctype="multipart/form-data" action="/users/signup/">
+                {% csrf_token %}
+                <div class="uk-margin">
+                  <label class="uk-form-label" for="userName">Username</label>
+                  <div class="uk-form-controls">
+                      <input class="uk-input" type="text" id="userName" name="userName" placeholder="Enter your Username" style="text-transform: lowercase;" required>
+                  </div>
+              </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="firstName">First Name</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="lastName">Last Name</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="email">Email</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" type="email" id="email" name="email" placeholder="Enter your email address" required>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="phoneNumber">Phone Number</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" type="tel" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" maxlength="11" minlength="11" required>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="password">Password</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                  <a href="{% url 'signin' %}">Have An Account?</a>
+                    <!-- <label class="uk-form-label">Social Media Links</label>
+                    <div class="uk-form-controls" id="socialMediaLinksContainer">
+                        <label><input class="uk-checkbox" type="checkbox" name="socialMediaLinksFacebook" value="Facebook"> Facebook</label><br>
+                        <label><input class="uk-checkbox" type="checkbox" name="socialMediaLinksInstagram" value="Instagram"> Instagram</label><br>
+                        <label><input class="uk-checkbox" type="checkbox" name="socialMediaLinksTwitter" value="Twitter"> Twitter</label><br>
+                        
+                    </div>  -->
+                </div>
+                
+                <!-- <div class="uk-margin">
+                    <label for="socialMediaLink">Social Media Profile Link</label>
+                    <input type="text" id="socialMediaLink" name="socialMediaLink" placeholder="Enter your profile link">
+                </div> -->
+                
+                <div class="uk-margin">
+                    <button class="uk-button uk-button-primary" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<footer class="uk-section uk-section-default">
+	<div class="uk-container uk-text-secondary uk-text-500">
+		<div class="uk-child-width-1-2@s" data-uk-grid>
+			<div>
+				<a href="#" class="uk-logo">CHOW</a>
+			</div>
+			<div class="uk-flex uk-flex-middle uk-flex-right@s">
+				<div data-uk-grid class="uk-child-width-auto uk-grid-small">
+					<div>
+						<a href="https://www.facebook.com/" data-uk-icon="icon: facebook; ratio: 0.8" class="uk-icon-button facebook" target="_blank"></a>
+					</div>
+					<div>
+						<a href="https://www.instagram.com/" data-uk-icon="icon: instagram; ratio: 0.8" class="uk-icon-button instagram" target="_blank"></a>
+					</div>
+					<div>
+						<a href="#" data-uk-icon="icon: twitter; ratio: 0.8" class="uk-icon-button twitter" target="_blank"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="uk-margin-medium-top uk-text-small uk-text-muted">				
+			<div>Made by <a class="uk-link-muted" target="_blank">Paul Erhuvwu</a></div>
+		</div>
+	</div>
+</footer>
+
+<div id="offcanvas" data-uk-offcanvas="flip: true; overlay: true">
+  <div class="uk-offcanvas-bar">
+    <a class="uk-logo" href="#">CHOW</a>
+    <button class="uk-offcanvas-close" type="button" data-uk-close="ratio: 1.2"></button>
+    <ul class="uk-nav uk-nav-primary uk-nav-offcanvas uk-margin-medium-top uk-text-center">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'contact' %}">Contact</a></li>
+      <li><a href="{% url 'faq' %}">FAQ</a></li>
+      <li><a href="{% url 'share' %}">Share Recipe</a></li>
+      {% if user.is_authenticated %}
+      <li>
+        <a href="{% url 'shared-recipes' %}">Shared Recipe</a>
+        <a class="uk-button uk-width-1-1 uk-button-primary" style="font-size: 17px; color: #666; font-weight: bold;" href="{% url 'logout' %}">Logout</a> 
+      </li>
+      {% else %}
+      <li><a href="{% url 'signin' %}">Sign In</a></li>
+    </ul>
+    <div class="uk-margin-medium-top">
+      <a class="uk-button uk-width-1-1 uk-button-primary" style="font-size: 17px;" href="{% url 'signup' %}">Sign Up</a>
+    </div>
+    {% endif %}
+    <div class="uk-margin-medium-top uk-text-center">
+      <div data-uk-grid class="uk-child-width-auto uk-grid-small uk-flex-center">
+        <div>
+          <a href="https://twitter.com/" data-uk-icon="icon: twitter" class="uk-icon-link" target="_blank"></a>
+        </div>
+        <div>
+          <a href="https://www.facebook.com/" data-uk-icon="icon: facebook" class="uk-icon-link" target="_blank"></a>
+        </div>
+        <div>
+          <a href="https://www.instagram.com/" data-uk-icon="icon: instagram" class="uk-icon-link" target="_blank"></a>
+        </div>
+        <div>
+          <a href="https://vimeo.com/" data-uk-icon="icon: vimeo" class="uk-icon-link" target="_blank"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const socialMediaLinksContainer = document.getElementById('socialMediaLinksContainer');
+
+    socialMediaLinksContainer.addEventListener('change', function(event) {
+        const checkbox = event.target;
+        if (checkbox.checked) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Enter ' + checkbox.value + ' profile link';
+            socialMediaLinksContainer.appendChild(input);
+        } else {
+            // Remove the corresponding input field if the checkbox is unchecked
+            const inputs = socialMediaLinksContainer.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                if (input.placeholder.includes(checkbox.value)) {
+                    input.remove();
+                }
+            });
+        }
+    });
+});
+</script>
+</body>
+
+</html>

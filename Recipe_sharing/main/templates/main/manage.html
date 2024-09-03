@@ -1,0 +1,365 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-gb" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CHOW | ENJOY AND SHARE RECIPES</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.png' %}" >
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Leckerli+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+  <script src="{% static 'js/uikit.js' %}"></script>
+</head>
+
+<style>
+  /* Add this CSS to your <style> tag or external stylesheet */
+  .profile-picture {
+    display: flex;
+    align-items: center;
+  }
+
+  .profile-picture img {
+    border-radius: 50%;
+    border: 2px solid #fff; /* Add a white border around the image */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add a shadow effect */
+  }
+
+  .profile-picture .uk-margin-left {
+    margin-left: 10px; /* Adjust the margin as needed */
+  }
+
+  .center-image {
+    display: block;
+    margin: auto;
+  }
+  /* Style for the logout link */
+  .profile-picture .uk-text-small {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+
+  .profile-picture .uk-text-small:hover {
+    color: #666; /* Change the color on hover */
+  }
+
+  .uk-subnav > li{
+    color: white;
+  }
+
+  .uk-subnav > li > a.active {
+    background-color: #eb4a36; /* Change to your desired background color */
+    color: white;
+  }
+
+  .uk-subnav-pill > * > :first-child {
+    padding: 5px 10px;
+    background: #b1b5bc;
+    color: white;
+  }
+</style>
+
+
+
+<body>
+
+<nav class="uk-navbar-container uk-letter-spacing-small">
+  <div class="uk-container">
+    <div class="uk-position-z-index" data-uk-navbar>
+      <div class="uk-navbar-left">
+        <a class="uk-navbar-item uk-logo" href="#">CHOW</a>
+        <ul class="uk-navbar-nav uk-visible@m uk-margin-large-left">
+          <li ><a href="{% url 'home' %}">Home</a></li>
+          <li ><a href="{% url 'share' %}">Share Recipe</a></li>
+          <li ><a href="{% url 'contact' %}">Contact</a></li>
+          <li ><a href="{% url 'faq' %}">FAQ</a></li>
+          <li>
+            {% if user.is_authenticated %}
+                <a href="{% url 'shared-recipes' %}">Shared Recipe</a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+      <div class="uk-navbar-right">
+        <!-- <div>
+          <a class="uk-navbar-toggle" data-uk-search-icon href="#"></a>
+          <div class="uk-drop uk-background-default" data-uk-drop="mode: click; pos: left-center; offset: 0">
+            <form class="uk-search uk-search-navbar uk-width-1-1">
+              <input class="uk-search-input uk-text-demi-bold" type="search" placeholder="Search..." autofocus>
+            </form>
+          </div>
+        </div> -->
+
+<!-- Template: main/index.html -->
+
+
+
+<div class="profile-picture">
+  {% if user.is_authenticated %}
+          <div class="uk-width-auto uk-first-column">
+            <a href="{% url 'manage' %}" data-uk-tooltip="title: Personal Details"><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 448 512" height="25px" width="30px" fill="#eb4a36"><path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z"/></svg>
+            </a>
+          </div>
+      <div class="uk-margin-left">
+          <a class="uk-text-small uk-text-primary" href="{% url 'logout' %}">Logout</a>
+      </div>
+  {% else %}
+      <div class="uk-margin-left" style="margin-left: 0px !important;">
+          <a class="uk-button" href="{% url 'signin' %}">Sign In</a>
+          <a class="uk-button uk-button-primary" href="{% url 'signup' %}">Sign Up</a>
+      </div>
+  {% endif %}
+</div>
+        <a class="uk-navbar-toggle uk-hidden@m" href="#offcanvas" data-uk-toggle><span
+          data-uk-navbar-toggle-icon></span></a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Personal Information Form -->
+<div class="uk-container uk-margin-large-top">
+  <ul class="uk-subnav uk-subnav-pill">
+    <li style="margin-bottom: 10px;"><a href="#" id="personalInfoTab" class="active">Personal Information</a></li>      
+  </ul>
+
+  <!-- Personal Information Tab Content -->
+  <div id="personalInfoContent">
+    <div class="uk-card uk-card-default uk-card-body">
+      <h2 class="uk-card-title">Personal Information</h2>
+      <form id="personalInfoForm" class="uk-form-stacked" method="post" enctype="multipart/form-data" action="{% url 'updateinfo' %}">
+        {% csrf_token %}
+        <!-- Add input fields for personal information here -->
+        
+        <div class="uk-margin">
+          <label class="uk-form-label" for="userName">Username <span style="color: red;">*Please leave username in lowercase*</span></label>
+          <div class="uk-form-controls">
+              <input style="text-transform: lowercase;" class="uk-input" type="text" id="userName" name="userName" placeholder="Enter your Username" required value="{{ request.user.username}}">
+          </div>
+        </div>
+        <div class="uk-margin">
+          <label class="uk-form-label" for="firstName">First Name</label>
+          <div class="uk-form-controls">
+            <input style="text-transform: capitalize;" class="uk-input" type="text" id="firstName" name="firstName" placeholder="Enter your first name" value="{{ request.user.first_name }}" required>
+          </div>
+        </div>
+        <div class="uk-margin">
+          <label class="uk-form-label" for="lastName">Last Name</label>
+          <div class="uk-form-controls">
+            <input style="text-transform: capitalize;" class="uk-input" type="text" id="lastName" name="lastName" placeholder="Enter your last name" value="{{ request.user.last_name }}" required>
+          </div>
+        </div>
+        <div class="uk-margin">
+          <label class="uk-form-label" for="email">Email</label>
+          <div class="uk-form-controls">
+            <input class="uk-input" type="email" id="email" name="email" placeholder="Enter your email address" value="{{ request.user.email }}" required>
+          </div>
+        </div>
+        <div class="uk-margin">
+          <label class="uk-form-label" for="phoneNumber">Phone Number</label>
+          <div class="uk-form-controls">
+            <input class="uk-input" type="tel" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" value="{{ request.user.profile.phone_number }}" required>
+          </div>
+        </div>
+        <!-- Change Password Modal Trigger -->
+        <div class="uk-margin">
+          <a href="#" id="changePasswordModalTrigger" uk-toggle="target: #changePasswordModal">Change Password?</a>
+        </div>
+        <!-- Add more fields as needed -->
+        <div class="uk-margin">
+          <button class="uk-button uk-button-primary" type="submit">Update Information</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Change Password Modal -->
+<div id="changePasswordModal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h2 class="uk-modal-title">Change Password</h2>
+
+    <form id="changePasswordForm" class="uk-form-stacked" method="post" action="{% url 'changepass' %}">
+      {% csrf_token %}
+      <!-- Error message for password mismatch -->
+      <div id="passwordMismatchError" style="display: none; color: red;">Passwords do not match.</div>
+      <br>
+      <!-- Success message -->
+      <div id="changePasswordSuccess" style="display: none; color: green;">Password changed successfully.</div>
+      <!-- Error message for server-side validation -->
+      <div id="changePasswordError" style="display: none; color: red;">An error occurred. Please try again later.</div>
+      <div class="uk-margin">
+        <label class="uk-form-label" for="newPassword">New Password <span style="color: red; font-size: 10px;">*Password must be 8 characters in length*</span></label>
+        <div class="uk-form-controls">
+          <input class="uk-input" type="password" id="newPassword" name="newPassword" placeholder="Enter your new password" required minlength="8">
+        </div>
+      </div>
+      <div class="uk-margin">
+        <label class="uk-form-label" for="confirmPassword">Confirm Password</label>
+        <div class="uk-form-controls">
+          <input class="uk-input" type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your new password" required minlength="8">
+        </div>
+      </div>
+      <div class="uk-margin">
+        <button class="uk-button uk-button-primary" type="submit">Change Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+<footer class="uk-section uk-section-default">
+  <div class="uk-container uk-text-secondary uk-text-500">
+    <div class="uk-child-width-1-2@s" data-uk-grid>
+      <div>
+        <a href="#" class="uk-logo">CHOW</a>
+      </div>
+      <div class="uk-flex uk-flex-middle uk-flex-right@s">
+        <div data-uk-grid class="uk-child-width-auto uk-grid-small">
+          <div>
+            <a href="https://www.facebook.com/" data-uk-icon="icon: facebook; ratio: 0.8" class="uk-icon-button facebook" target="_blank"></a>
+          </div>
+          <div>
+            <a href="https://www.instagram.com/" data-uk-icon="icon: instagram; ratio: 0.8" class="uk-icon-button instagram" target="_blank"></a>
+          </div>
+          <div>
+            <a href="#" data-uk-icon="icon: twitter; ratio: 0.8" class="uk-icon-button twitter" target="_blank"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="uk-margin-medium-top uk-text-small uk-text-muted">				
+      <div>Made by <a class="uk-link-muted" target="_blank">Paul Erhuvwu</a></div>
+    </div>
+  </div>
+</footer>
+
+
+<div id="offcanvas" data-uk-offcanvas="flip: true; overlay: true">
+  <div class="uk-offcanvas-bar">
+    <a class="uk-logo" href="#">CHOW</a>
+    <button class="uk-offcanvas-close" type="button" data-uk-close="ratio: 1.2"></button>
+    <ul class="uk-nav uk-nav-primary uk-nav-offcanvas uk-margin-medium-top uk-text-center">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'contact' %}">Contact</a></li>
+      <li><a href="{% url 'faq' %}">FAQ</a></li>
+      <li><a href="{% url 'share' %}">Share Recipe</a></li>
+      {% if user.is_authenticated %}
+      <li>
+        <a href="{% url 'shared-recipes' %}">Shared Recipe</a>
+        <a class="uk-button uk-width-1-1 uk-button-primary" style="font-size: 17px; color: #666; font-weight: bold;" href="{% url 'logout' %}">Logout</a> 
+      </li>
+      {% else %}
+      <a class="uk-button uk-width-1-1 uk-button-primary" style="font-size: 17px;" href="{% url 'signup' %}">Sign Up</a>
+    </ul>
+    <div class="uk-margin-medium-top">
+      <a class="uk-button uk-width-1-1 uk-button-primary" href="{% url 'signup' %}">Sign Up</a>
+    </div>
+    {% endif %}
+    <div class="uk-margin-medium-top uk-text-center">
+      <div data-uk-grid class="uk-child-width-auto uk-grid-small uk-flex-center">
+        <div>
+          <a href="https://twitter.com/" data-uk-icon="icon: twitter" class="uk-icon-link" target="_blank"></a>
+        </div>
+        <div>
+          <a href="https://www.facebook.com/" data-uk-icon="icon: facebook" class="uk-icon-link" target="_blank"></a>
+        </div>
+        <div>
+          <a href="https://www.instagram.com/" data-uk-icon="icon: instagram" class="uk-icon-link" target="_blank"></a>
+        </div>
+        <div>
+          <a href="https://vimeo.com/" data-uk-icon="icon: vimeo" class="uk-icon-link" target="_blank"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get form and error message elements
+    const form = document.getElementById('changePasswordForm');
+    const newPasswordInput = document.getElementById('newPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const passwordMismatchError = document.getElementById('passwordMismatchError');
+    const changePasswordSuccess = document.getElementById('changePasswordSuccess');
+    const changePasswordError = document.getElementById('changePasswordError');
+
+    // Add event listener to form submission
+    form.addEventListener('submit', function(event) {
+      // Prevent form submission
+      event.preventDefault();
+
+      // Check if passwords match
+      if (newPasswordInput.value !== confirmPasswordInput.value) {
+        // Display error message
+        passwordMismatchError.style.display = 'block';
+
+        // Delay form submission to ensure the alert is displayed
+        setTimeout(function() {
+          // Remove the error message
+          passwordMismatchError.style.display = 'none';
+
+          // Clear Django error message if present
+          document.getElementById('alertContainer').innerHTML = '';
+        }, 5000); // Remove the error message after 5 seconds
+      } else {
+        // Hide error message and submit form
+        passwordMismatchError.style.display = 'none';
+
+        // Validate passwords
+        var newPassword = newPasswordInput.value;
+        var confirmPassword = confirmPasswordInput.value;
+
+        // Handle form submission using JavaScript fetch or AJAX
+        fetch('{% url "changepass" %}', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            newPassword: newPassword,
+            confirmPassword: confirmPassword
+          })
+        })
+        .then(response => {
+          if (response.ok) {
+            changePasswordSuccess.style.display = 'block';
+            changePasswordError.style.display = 'none';
+          } else {
+            changePasswordSuccess.style.display = 'none';
+            changePasswordError.style.display = 'block';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          changePasswordSuccess.style.display = 'none';
+          changePasswordError.style.display = 'block';
+        });
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+
+</body>
+</html>
