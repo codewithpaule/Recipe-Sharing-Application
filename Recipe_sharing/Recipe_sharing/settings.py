@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-@v3_yj_44#a_4+nmd)r$k^@%%!eqf$#ms=c8l@)3ovk&cs#tow
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['recipe-sharing-application-uxcu.onrender.com']
 
 
 
